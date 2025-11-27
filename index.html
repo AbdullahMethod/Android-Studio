@@ -22,6 +22,7 @@
             --success: #00b894;
             --warning: #fdcb6e;
             --gradient: linear-gradient(135deg, #6c5ce7, #a29bfe, #fd79a8);
+            --gradient-glow: linear-gradient(135deg, #6c5ce7, #a29bfe, #fd79a8, #6c5ce7);
         }
 
         body {
@@ -92,44 +93,77 @@
         }
 
         .hero {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 80px 0;
-            gap: 40px;
+            text-align: center;
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
         }
 
-        .hero-content {
-            flex: 1;
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: var(--gradient);
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            top: -200px;
+            left: -200px;
+            z-index: -1;
+            animation: float 15s ease-in-out infinite;
         }
 
-        .hero-image {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .hero-image img {
-            max-width: 100%;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: var(--gradient);
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.1;
+            bottom: -150px;
+            right: -150px;
+            z-index: -1;
+            animation: float 12s ease-in-out infinite reverse;
         }
 
         h1 {
-            font-size: 3.5rem;
+            font-size: 4rem;
             margin-bottom: 20px;
             background: var(--gradient);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             line-height: 1.2;
+            position: relative;
+            display: inline-block;
+            animation: text-glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes text-glow {
+            0% { text-shadow: 0 0 10px rgba(108, 92, 231, 0.3); }
+            100% { text-shadow: 0 0 20px rgba(108, 92, 231, 0.6), 0 0 30px rgba(253, 121, 168, 0.4); }
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 10px;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s;
+        }
+
+        h1:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
         }
 
         h1 span {
@@ -138,10 +172,13 @@
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             margin-bottom: 30px;
             color: var(--secondary);
             line-height: 1.6;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .features {
@@ -149,21 +186,40 @@
             flex-wrap: wrap;
             gap: 15px;
             margin-bottom: 40px;
+            justify-content: center;
         }
 
         .feature {
             background: rgba(255, 255, 255, 0.1);
-            padding: 10px 20px;
+            padding: 15px 25px;
             border-radius: 50px;
             display: flex;
             align-items: center;
             gap: 10px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .feature:nth-child(1) { animation-delay: 0.1s; }
+        .feature:nth-child(2) { animation-delay: 0.2s; }
+        .feature:nth-child(3) { animation-delay: 0.3s; }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
         .feature i {
             color: var(--accent);
+        }
+
+        /* AMAZING DOWNLOAD BUTTON */
+        .download-container {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
         }
 
         .download-btn {
@@ -172,15 +228,18 @@
             gap: 15px;
             background: var(--gradient);
             color: white;
-            padding: 18px 40px;
+            padding: 20px 50px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             box-shadow: 0 10px 30px rgba(108, 92, 231, 0.5);
-            transition: all 0.3s;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
+            z-index: 1;
+            transform: perspective(500px) rotateX(0deg);
+            animation: pulse-glow 3s infinite, float-btn 4s ease-in-out infinite;
         }
 
         .download-btn::before {
@@ -190,21 +249,84 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.5s;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.7s;
+            z-index: -1;
         }
 
         .download-btn:hover::before {
             left: 100%;
         }
 
+        .download-btn::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-glow);
+            border-radius: 52px;
+            z-index: -2;
+            filter: blur(15px);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .download-btn:hover::after {
+            opacity: 1;
+        }
+
         .download-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.7);
+            transform: perspective(500px) rotateX(10deg) translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(108, 92, 231, 0.7);
+            letter-spacing: 1px;
         }
 
         .download-btn i {
             font-size: 1.5rem;
+            transition: transform 0.5s;
+        }
+
+        .download-btn:hover i {
+            transform: translateY(5px) rotate(360deg);
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 10px 30px rgba(108, 92, 231, 0.5); }
+            50% { box-shadow: 0 10px 40px rgba(108, 92, 231, 0.8), 0 0 30px rgba(253, 121, 168, 0.5); }
+        }
+
+        @keyframes float-btn {
+            0%, 100% { transform: perspective(500px) rotateX(0deg) translateY(0); }
+            50% { transform: perspective(500px) rotateX(5deg) translateY(-10px); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .steps {
@@ -214,6 +336,7 @@
             margin: 60px 0;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInUp 1s ease-out;
         }
 
         .steps h2 {
@@ -239,6 +362,30 @@
             text-align: center;
             transition: transform 0.3s;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .step:nth-child(1) { animation-delay: 0.1s; }
+        .step:nth-child(2) { animation-delay: 0.2s; }
+        .step:nth-child(3) { animation-delay: 0.3s; }
+        .step:nth-child(4) { animation-delay: 0.4s; }
+
+        .step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+            transform: scaleX(0);
+            transition: transform 0.5s;
+        }
+
+        .step:hover::before {
+            transform: scaleX(1);
         }
 
         .step:hover {
@@ -257,6 +404,11 @@
             margin: 0 auto 20px;
             font-weight: 700;
             font-size: 1.2rem;
+            transition: transform 0.5s;
+        }
+
+        .step:hover .step-number {
+            transform: rotate(360deg) scale(1.1);
         }
 
         .step h3 {
@@ -276,6 +428,7 @@
             margin: 60px 0;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInUp 1s ease-out;
         }
 
         .tutorial-points h2 {
@@ -305,6 +458,30 @@
             border-radius: 15px;
             transition: transform 0.3s;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .point:nth-child(1) { animation-delay: 0.1s; }
+        .point:nth-child(2) { animation-delay: 0.2s; }
+        .point:nth-child(3) { animation-delay: 0.3s; }
+        .point:nth-child(4) { animation-delay: 0.4s; }
+        .point:nth-child(5) { animation-delay: 0.5s; }
+
+        .point::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: 0.5s;
+        }
+
+        .point:hover::before {
+            left: 100%;
         }
 
         .point:hover {
@@ -322,6 +499,11 @@
             justify-content: center;
             font-weight: 700;
             flex-shrink: 0;
+            transition: transform 0.3s;
+        }
+
+        .point:hover .point-number {
+            transform: scale(1.1);
         }
 
         .point-content h3 {
@@ -339,6 +521,7 @@
             padding: 40px 0;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--secondary);
+            animation: fadeInUp 1s ease-out;
         }
 
         .social-links {
@@ -351,22 +534,33 @@
         .social-links a {
             color: var(--light);
             font-size: 1.5rem;
-            transition: color 0.3s;
+            transition: all 0.3s;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .social-links a:hover {
             color: var(--accent);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         @media (max-width: 768px) {
             .hero {
-                flex-direction: column;
-                text-align: center;
-                padding: 40px 0;
+                padding: 60px 0;
             }
 
             h1 {
                 font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
             }
 
             .features {
@@ -383,14 +577,39 @@
             }
         }
 
-        .pulse {
-            animation: pulse 2s infinite;
+        /* Confetti animation */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--gradient);
+            top: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1000;
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(108, 92, 231, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); }
+        @keyframes confetti-fall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+
+        .android-icon {
+            font-size: 5rem;
+            margin-bottom: 30px;
+            color: var(--accent);
+            animation: bounce 3s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
     </style>
 </head>
@@ -413,32 +632,32 @@
         </header>
 
         <section class="hero">
-            <div class="hero-content">
-                <h1>Create a Free <span>Android 16</span> Emulator for Windows 11</h1>
-                <p class="subtitle">Android 16 is Here! One-Click Installation to Windows 11. Completely free and incredibly simple steps!</p>
-                
-                <div class="features">
-                    <div class="feature">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Free Installation</span>
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-bolt"></i>
-                        <span>High Performance</span>
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-user-friends"></i>
-                        <span>Beginner Friendly</span>
-                    </div>
+            <div class="android-icon">
+                <i class="fab fa-android"></i>
+            </div>
+            <h1>Create a Free <span>Android 16</span> Emulator for Windows 11</h1>
+            <p class="subtitle">Android 16 is Here! One-Click Installation to Windows 11. Completely free and incredibly simple steps!</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Free Installation</span>
                 </div>
-                
-                <a href="https://go.abdullah.nyc.mn/Zib3Gy" class="download-btn pulse">
+                <div class="feature">
+                    <i class="fas fa-bolt"></i>
+                    <span>High Performance</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-user-friends"></i>
+                    <span>Beginner Friendly</span>
+                </div>
+            </div>
+            
+            <div class="download-container">
+                <a href="https://go.abdullah.nyc.mn/Zib3Gy" class="download-btn" id="downloadBtn">
                     <i class="fas fa-download"></i>
                     Download Now
                 </a>
-            </div>
-            <div class="hero-image">
-                <img src="https://i.imgur.com/3s3hZ1P.png" alt="Android 16 Emulator">
             </div>
         </section>
 
@@ -524,24 +743,121 @@
     <script>
         // Add animation to download button on page load
         document.addEventListener('DOMContentLoaded', function() {
-            const downloadBtn = document.querySelector('.download-btn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            // Create sparkles on button hover
+            downloadBtn.addEventListener('mouseenter', function() {
+                createSparkles(this);
+            });
             
             // Add click event to track downloads
-            downloadBtn.addEventListener('click', function() {
-                alert('Thank you for downloading! Your download should start shortly.');
+            downloadBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Create confetti effect
+                createConfetti();
+                
+                // Show success message
+                setTimeout(function() {
+                    alert('Thank you for downloading! Your download should start shortly.');
+                    window.location.href = downloadBtn.href;
+                }, 1500);
             });
             
-            // Add floating animation to features
-            const features = document.querySelectorAll('.feature');
-            features.forEach((feature, index) => {
-                feature.style.animationDelay = `${index * 0.2}s`;
-            });
+            // Function to create sparkles
+            function createSparkles(element) {
+                const rect = element.getBoundingClientRect();
+                const sparkleCount = 15;
+                
+                for (let i = 0; i < sparkleCount; i++) {
+                    const sparkle = document.createElement('div');
+                    sparkle.classList.add('sparkle');
+                    
+                    // Random position around the button
+                    const x = Math.random() * rect.width;
+                    const y = Math.random() * rect.height;
+                    
+                    sparkle.style.left = `${x}px`;
+                    sparkle.style.top = `${y}px`;
+                    
+                    // Random size and color
+                    const size = Math.random() * 8 + 4;
+                    sparkle.style.width = `${size}px`;
+                    sparkle.style.height = `${size}px`;
+                    
+                    const colors = ['#6c5ce7', '#a29bfe', '#fd79a8', '#ffffff'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    sparkle.style.background = color;
+                    
+                    element.appendChild(sparkle);
+                    
+                    // Animate sparkle
+                    sparkle.animate([
+                        { opacity: 0, transform: 'scale(0)' },
+                        { opacity: 1, transform: 'scale(1)' },
+                        { opacity: 0, transform: 'scale(0) translateY(-20px)' }
+                    ], {
+                        duration: 1000,
+                        easing: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                    });
+                    
+                    // Remove sparkle after animation
+                    setTimeout(() => {
+                        sparkle.remove();
+                    }, 1000);
+                }
+            }
             
-            // Add staggered animation to tutorial points
-            const points = document.querySelectorAll('.point');
-            points.forEach((point, index) => {
-                point.style.animationDelay = `${index * 0.1}s`;
-            });
+            // Function to create confetti
+            function createConfetti() {
+                const confettiCount = 100;
+                
+                for (let i = 0; i < confettiCount; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    
+                    // Random position at top of screen
+                    const x = Math.random() * window.innerWidth;
+                    
+                    // Random size
+                    const size = Math.random() * 10 + 5;
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    
+                    // Random color
+                    const colors = ['#6c5ce7', '#a29bfe', '#fd79a8', '#00b894', '#fdcb6e'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.background = color;
+                    
+                    // Random shape
+                    const shapes = ['50%', '0%'];
+                    confetti.style.borderRadius = shapes[Math.floor(Math.random() * shapes.length)];
+                    
+                    document.body.appendChild(confetti);
+                    
+                    // Animate confetti falling
+                    confetti.style.left = `${x}px`;
+                    
+                    const animation = confetti.animate([
+                        { 
+                            opacity: 1, 
+                            transform: `translateY(0) rotate(0deg)`,
+                        },
+                        { 
+                            opacity: 0, 
+                            transform: `translateY(100vh) rotate(${Math.random() * 720}deg)`,
+                        }
+                    ], {
+                        duration: Math.random() * 3000 + 2000,
+                        easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+                    });
+                    
+                    // Remove confetti after animation
+                    animation.onfinish = () => {
+                        confetti.remove();
+                    };
+                }
+            }
         });
     </script>
 </body>
